@@ -2586,11 +2586,9 @@ meta_window_maximize_internal (MetaWindow        *window,
                                MetaMaximizeFlags  directions,
                                MetaRectangle     *saved_rect)
 {
-  /* At least one of the two directions ought to be set */
   gboolean maximize_horizontally, maximize_vertically;
   maximize_horizontally = directions & META_MAXIMIZE_HORIZONTAL;
   maximize_vertically   = directions & META_MAXIMIZE_VERTICAL;
-  g_assert (maximize_horizontally || maximize_vertically);
 
   meta_topic (META_DEBUG_WINDOW_OPS,
               "Maximizing %s%s\n",
@@ -2715,14 +2713,16 @@ unmaximize_window_before_freeing (MetaWindow        *window)
 void
 meta_window_tile (MetaWindow *window)
 {
+  gboolean side_tile = FALSE;
   /* Don't do anything if no tiling is requested */
   if (window->tile_mode == META_TILE_NONE)
     return;
 
   if(window->tile_mode == META_TILE_LEFT || window->tile_mode == META_TILE_RIGHT)
-    meta_window_maximize_internal (window, META_MAXIMIZE_VERTICAL, NULL);
-  else
-    meta_window_save_rect(window);
+    side_tile = TRUE;
+
+  
+  meta_window_maximize_internal (window, side_tile ? META_MAXIMIZE_VERTICAL : 0, NULL);
 
     
   window->tiled = TRUE;
