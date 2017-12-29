@@ -2403,6 +2403,7 @@ meta_screen_resize (MetaScreen *screen,
                     int         width,
                     int         height)
 {
+
   screen->rect.width = width;
   screen->rect.height = height;
 

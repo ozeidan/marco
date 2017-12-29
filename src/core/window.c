@@ -2747,10 +2747,13 @@ meta_window_can_tile_maximized (MetaWindow *window)
 }
 
 gboolean
-meta_window_can_tile (MetaWindow *window)
+meta_window_can_tile (MetaWindow *window,
+                      MetaTileMode mode)
+                      
 {
   const MetaXineramaScreenInfo *monitor;
   MetaRectangle tile_area;
+  gboolean corner_tiling;
 
   /*if (!META_WINDOW_ALLOWS_RESIZE (window))*/
   if (!meta_window_can_tile_maximized (window) || window->shaded)
@@ -2759,7 +2762,15 @@ meta_window_can_tile (MetaWindow *window)
   monitor = meta_screen_get_current_xinerama (window->screen);
   meta_window_get_work_area_for_xinerama (window, monitor->number, &tile_area);
 
+  corner_tiling = ((mode == META_TILE_TOP_LEFT) ||
+                   (mode == META_TILE_TOP_RIGHT) ||
+                   (mode == META_TILE_BOTTOM_LEFT) ||
+                   (mode == META_TILE_BOTTOM_RIGHT));
+    
   tile_area.width /= 2;
+
+  if(corner_tiling)
+    tile_area.height /= 2;
 
   if (window->frame)
     {
@@ -7234,7 +7245,8 @@ static MetaTileMode calculate_tiling_mode(int x,
                                           MetaRectangle work_area,
                                           int shake_threshold)
 {  
-  if (meta_window_can_tile (window) &&
+  if (meta_window_can_tile (window,
+                            META_TILE_NONE) &&
       x >= monitor->rect.x
       && x < (work_area.x + shake_threshold))
     {
@@ -7247,7 +7259,8 @@ static MetaTileMode calculate_tiling_mode(int x,
         return META_TILE_LEFT; 
     }
   
-  else if (meta_window_can_tile (window) &&
+  else if (meta_window_can_tile (window,
+                                 META_TILE_NONE) &&
            x >= work_area.x + work_area.width - shake_threshold &&
            x < (monitor->rect.x + monitor->rect.width))
     {

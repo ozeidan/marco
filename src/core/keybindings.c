@@ -3095,7 +3095,8 @@ handle_toggle_tiled (MetaDisplay *display,
       window->tile_monitor_number = -1;
       meta_window_untile(window);
     }
-  else if (meta_window_can_tile (window))
+  else if (meta_window_can_tile (window,
+                                 mode))
     {
       window->tile_mode = mode;
       window->tile_resized = FALSE;
