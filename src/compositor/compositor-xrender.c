@@ -1265,6 +1265,9 @@ paint_windows (MetaScreen   *screen,
           /* Not damaged */
           continue;
         }
+      
+      if (cw->attrs.map_state != IsViewable)
+        continue;
 
 #if 0
       if ((cw->attrs.x + cw->attrs.width < 1) ||
